@@ -19,3 +19,19 @@ def add_book_to_db(
     """
     CURSOR.execute(addition_query, content)
     DB.commit()
+
+
+def remove_book_given_id(book_id: int) -> None:
+    """Remove a book from the DB given its ID"""
+    # To avoid wrong unwanted injections
+    if not isinstance(book_id, int):
+        raise TypeError(f"Book ID should be int, {type(book_id)} was provided")
+
+    query = f"book_pk = {book_id}"
+    remove_book_general(query)
+
+
+def remove_book_general(delete_condition_query: str) -> None:
+    """Remove a book from the DB given a general conditional query"""
+    CURSOR.execute("DELETE FROM Book WHERE %s", delete_condition_query)
+    DB.commit()
