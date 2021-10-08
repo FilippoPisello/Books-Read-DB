@@ -1,4 +1,4 @@
-from db_connect import DB, CURSOR
+from database.db_connect import DB, CURSOR
 
 
 def add_book_to_db(
@@ -8,13 +8,14 @@ def add_book_to_db(
     pages: int,
     genre: str,
     owned: bool = None,
-    tags: list[str] = None,
+    tags: str = None,
 ) -> None:
     """Log a book into the DB"""
+
     content = (title, author_name, author_surname, pages, genre, owned, tags)
     addition_query = """
     INSERT INTO Book (title, author_name, author_surname, pages, genre, owned, tags)
     VALUES (%s, %s, %s, %s, %s, %s, %s)
     """
     CURSOR.execute(addition_query, content)
-    DB.COMMIT()
+    DB.commit()
