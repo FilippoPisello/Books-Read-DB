@@ -1,6 +1,14 @@
-from db_connect import GENERAL_CURSOR, CURSOR
+from mysql.connector import Error as db_error
 
-GENERAL_CURSOR.execute("CREATE DATABASE books_database")
+from database.db_connect import GENERAL_CURSOR, CURSOR
+
+try:
+    GENERAL_CURSOR.execute("CREATE DATABASE books_database")
+except db_error as err:
+    if err.errno == 1007:
+        print("The database already exists, no action is taken.")
+    else:
+        raise err
 
 book_table_creation_q = """
     CREATE TABLE Book (
@@ -25,6 +33,5 @@ bookread_table_creation_q = """
         bookread_pk VARCHAR(20) PRIMARY KEY)
 """
 
-# cursor.execute("DROP TABLE Book")
 CURSOR.execute(book_table_creation_q)
 CURSOR.execute(bookread_table_creation_q)
