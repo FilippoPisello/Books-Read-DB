@@ -1,6 +1,10 @@
 from typing import Type, Union, Any
 from database.db_connect import DB, CURSOR
 
+FieldsInput = Union[str, list[str]]
+SingleresultSearch = Union[tuple[str, ...], None]
+MultiresultsSearch = Union[tuple[tuple[str, ...], ...], None]
+
 
 def add_book_to_db(
     title: str,
@@ -22,7 +26,7 @@ def add_book_to_db(
     DB.commit()
 
 
-def get_last_book(fields: Union[str, list[str]] = "All") -> tuple:
+def get_last_book(fields: FieldsInput = "All") -> tuple:
     """Retrive the last book added to the database"""
     fields = parse_field_input(fields)
     last_id = get_last_id()
@@ -40,7 +44,7 @@ def get_last_id() -> str:
     return CURSOR.fetchone()[0]
 
 
-def parse_field_input(field_input: Union[str, list[str]]) -> str:
+def parse_field_input(field_input: FieldsInput) -> str:
     """Transform an indication of field into str to be passed to query"""
     if field_input == "All":
         return "*"
@@ -89,3 +93,37 @@ def validate_input_type(input_item: Any, exp_type: Type) -> None:
         )
 
 
+def search_book_given_title_author(
+    title: str, author_name: str, author_surname: str, fields: FieldsInput = "All"
+) -> MultiresultsSearch:
+    """Remove a book from the DB given its ID"""
+    for arg in [title, author_name, author_surname]:
+        validate_input_type(arg, str)
+
+    query = f"""title = '{title}'
+    AND author_name = '{author_name}'
+    AND author_surname = '{author_surname}'"""
+    return search_book_general(query, fields)
+
+
+def search_book_given_id(
+    book_id: int, fields: FieldsInput = "All"
+) -> SingleresultSearch:
+    """Search a book by id in the database. Return info as a tuple if found,
+    None otherwise."""
+    validate_input_type(book_id, int)
+
+    query = f"book_pk = {book_id}"
+    return search_book_general(query, fields, return_one=True)
+
+
+def search_book_general(
+    search_condition_query: str, fields: FieldsInput = "All", return_one=False
+) -> Union[MultiresultsSearch, SingleresultSearch]:
+    """Run a search in the database and return the results. If return_one, only
+    last result is returned."""
+    fields = parse_field_input(fields)
+    CURSOR.execute(f"SELECT {fields} FROM Book WHERE {search_condition_query}")
+    if return_one:
+        return CURSOR.fetchone()
+    return CURSOR.fetchall()

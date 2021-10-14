@@ -66,6 +66,19 @@ class TestDBActions(unittest.TestCase):
         name_last = act.get_last_book(fields="author_name")
         self.assertEqual(name_last[0], "edft")
 
+    def test_searchbook(self):
+        """Test that books are correctly searched in the DB"""
+        act.add_book_to_db("Test", "kjim", "Test", 120, "Test", False, "Test, Test")
+
+        last_id = CURSOR.lastrowid
+        search_result = act.search_book_given_id(int(last_id))
+        self.assertEqual(search_result[1], "kjim")
+
+        search_result = act.search_book_given_title_author(
+            "Test", "kjim", "Test", fields="book_pk"
+        )
+        self.assertEqual(search_result[0][0], last_id)
+
 
 if __name__ == "__main__":
     unittest.main()
