@@ -34,8 +34,7 @@ def add_book_to_db(
 def remove_book_given_id(book_id: int) -> None:
     """Remove a book from the DB given its ID"""
     validate_input_type(book_id, int)
-
-    query = f"book_pk = {book_id}"
+    query = where_equal_bookid(book_id)
     remove_book_general(query)
 
 
@@ -43,18 +42,14 @@ def remove_book_given_title_author(
     title: str, author_name: str, author_surname: str
 ) -> None:
     """Remove a book from the DB given its ID"""
-    for arg in [title, author_name, author_surname]:
-        validate_input_type(arg, str)
-
-    query = f"""title = '{title}'
-    AND author_name = '{author_name}'
-    AND author_surname = '{author_surname}'"""
+    validate_multiple_inputs_type([title, author_name, author_surname], str)
+    query = where_equal_title_author(title, author_name, author_surname)
     remove_book_general(query)
 
 
 def remove_book_general(delete_condition_query: str) -> None:
     """Remove a book from the DB given a general conditional query"""
-    CURSOR.execute(f"DELETE FROM Book WHERE {delete_condition_query}")
+    CURSOR.execute(f"DELETE FROM Book {delete_condition_query}")
     DB.commit()
 
 
@@ -86,12 +81,8 @@ def search_book_given_title_author(
     title: str, author_name: str, author_surname: str, fields: FieldsInput = "All"
 ) -> MultiresultsSearch:
     """Remove a book from the DB given its ID"""
-    for arg in [title, author_name, author_surname]:
-        validate_input_type(arg, str)
-
-    query = f"""title = '{title}'
-    AND author_name = '{author_name}'
-    AND author_surname = '{author_surname}'"""
+    validate_multiple_inputs_type([title, author_name, author_surname], str)
+    query = where_equal_title_author(title, author_name, author_surname)
     return search_book_general(query, fields)
 
 
@@ -101,8 +92,7 @@ def search_book_given_id(
     """Search a book by id in the database. Return info as a tuple if found,
     None otherwise."""
     validate_input_type(book_id, int)
-
-    query = f"book_pk = {book_id}"
+    query = where_equal_bookid(book_id)
     return search_book_general(query, fields, return_one=True)
 
 
@@ -112,10 +102,25 @@ def search_book_general(
     """Run a search in the database and return the results. If return_one, only
     last result is returned."""
     fields = parse_field_input(fields)
-    CURSOR.execute(f"SELECT {fields} FROM Book WHERE {search_condition_query}")
+    CURSOR.execute(f"SELECT {fields} FROM Book {search_condition_query}")
     if return_one:
         return CURSOR.fetchone()
     return CURSOR.fetchall()
+
+
+############################
+# Conditions for WHERE statements
+############################
+def where_equal_bookid(book_id: int) -> str:
+    return f"WHERE book_pk = {book_id}"
+
+
+def where_equal_title_author(title: str, author_name: str, author_surname: str) -> str:
+    query = f"""WHERE
+    title = '{title}'
+    AND author_name = '{author_name}'
+    AND author_surname = '{author_surname}'"""
+    return query
 
 
 ############################
@@ -134,9 +139,14 @@ def parse_field_input(field_input: FieldsInput) -> str:
     )
 
 
+def validate_multiple_inputs_type(input_items_list: list[Any], exp_type: Type) -> None:
+    """Raise an error if each item in input_items_list is not of type exp_type"""
+    for item in input_items_list:
+        validate_input_type(item, exp_type)
+
+
 def validate_input_type(input_item: Any, exp_type: Type) -> None:
-    """To avoid unwanted injections, raise an error if input_item is not of type
-    exp_type"""
+    """Raise an error if input_item is not of type exp_type"""
     if not isinstance(input_item, exp_type):
         raise TypeError(
             f"Book ID should be {exp_type}, {type(input_item)} was provided"
