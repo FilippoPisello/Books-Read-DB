@@ -3,7 +3,7 @@ from database.db_connect import DB, CURSOR
 
 FieldsInput = Union[str, list[str]]
 SingleresultSearch = Union[tuple[str, ...], None]
-MultiresultsSearch = Union[tuple[tuple[str, ...], ...], None]
+MultiresultsSearch = Union[list[tuple[str, ...]], None]
 
 ############################
 # Add book
@@ -80,10 +80,11 @@ def get_last_id() -> str:
 def search_book_given_title_author(
     title: str, author_name: str, author_surname: str, fields: FieldsInput = "All"
 ) -> MultiresultsSearch:
-    """Remove a book from the DB given its ID"""
+    """Search a book by title and author in the database. Return info as a
+    tuple if found, None otherwise."""
     validate_multiple_inputs_type([title, author_name, author_surname], str)
     query = where_equal_title_author(title, author_name, author_surname)
-    return search_book_general(query, fields)
+    return search_book_general(query, fields, return_one=True)
 
 
 def search_book_given_id(
@@ -105,7 +106,10 @@ def search_book_general(
     CURSOR.execute(f"SELECT {fields} FROM Book {search_condition_query}")
     if return_one:
         return CURSOR.fetchone()
-    return CURSOR.fetchall()
+
+    # For consistency, if no result then return None
+    multiple_result = CURSOR.fetchall()
+    return multiple_result if multiple_result else None
 
 
 ############################
