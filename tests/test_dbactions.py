@@ -100,6 +100,18 @@ class TestDBActions(unittest.TestCase):
         search2 = act.is_book_in_database("Test", "AShdkhas", "Ahsjhdakhdoah")
         self.assertFalse(search2)
 
+    def test_findbookid(self):
+        """Test if book id is correctly retrived given title and author details."""
+        act.add_book_to_db("Test", "kjim", "Test", 120, "Test", False, "Test, Test")
+        last_id = CURSOR.lastrowid
+
+        search_id = act.search_bookid_given_title_author("Test", "kjim", "Test")
+        self.assertEqual(search_id, last_id)
+
+        search_id = act.search_bookid_given_title_author("Ajhasjhdaj", "kjim", "Test")
+        self.assertIsNone(search_id)
+
+
 
 if __name__ == "__main__":
     unittest.main()

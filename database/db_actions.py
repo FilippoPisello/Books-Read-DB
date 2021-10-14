@@ -83,6 +83,16 @@ def is_book_in_database(title: str, author_name: str, author_surname: str) -> bo
     return bool(search_book_given_title_author(title, author_name, author_surname))
 
 
+def search_bookid_given_title_author(
+    title: str, author_name: str, author_surname: str
+) -> Union[str, None]:
+    """Return book id given title and author details."""
+    res = search_book_given_title_author(title, author_name, author_surname, "book_pk")
+    if res:
+        return res[0]
+    return None
+
+
 def search_book_given_title_author(
     title: str, author_name: str, author_surname: str, fields: FieldsInput = "All"
 ) -> MultiresultsSearch:
