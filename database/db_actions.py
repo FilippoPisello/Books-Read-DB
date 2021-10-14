@@ -77,6 +77,12 @@ def get_last_id() -> str:
 ############################
 # Search book
 ############################
+def is_book_in_database(title: str, author_name: str, author_surname: str) -> bool:
+    """Return True if search criteria meet at least a book in the DB, False
+    otherwise."""
+    return bool(search_book_given_title_author(title, author_name, author_surname))
+
+
 def search_book_given_title_author(
     title: str, author_name: str, author_surname: str, fields: FieldsInput = "All"
 ) -> MultiresultsSearch:

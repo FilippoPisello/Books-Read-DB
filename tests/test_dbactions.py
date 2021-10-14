@@ -91,6 +91,14 @@ class TestDBActions(unittest.TestCase):
         )
         self.assertIsNone(search_result)
 
+    def test_bookindatabase(self):
+        """Test if logical test for book in database works correctly"""
+        act.add_book_to_db("Test", "kjim", "Test", 120, "Test", False, "Test, Test")
+
+        search1 = act.is_book_in_database("Test", "kjim", "Test")
+        self.assertTrue(search1)
+        search2 = act.is_book_in_database("Test", "AShdkhas", "Ahsjhdakhdoah")
+        self.assertFalse(search2)
 
 
 if __name__ == "__main__":
