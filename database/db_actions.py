@@ -5,7 +5,9 @@ FieldsInput = Union[str, list[str]]
 SingleresultSearch = Union[tuple[str, ...], None]
 MultiresultsSearch = Union[tuple[tuple[str, ...], ...], None]
 
-
+############################
+# Add book
+############################
 def add_book_to_db(
     title: str,
     author_name: str,
@@ -26,37 +28,9 @@ def add_book_to_db(
     DB.commit()
 
 
-def get_last_book(fields: FieldsInput = "All") -> tuple:
-    """Retrive the last book added to the database"""
-    fields = parse_field_input(fields)
-    last_id = get_last_id()
-    query = f"SELECT {fields} FROM Book WHERE book_pk = %s"
-    CURSOR.execute(query, (last_id,))
-    return CURSOR.fetchone()
-
-
-def get_last_id() -> str:
-    """Retrive the ID of the last book added in the DB"""
-    last_id = CURSOR.lastrowid
-    if last_id != 0:
-        return last_id
-    CURSOR.execute("SELECT MAX(book_pk) FROM Book")
-    return CURSOR.fetchone()[0]
-
-
-def parse_field_input(field_input: FieldsInput) -> str:
-    """Transform an indication of field into str to be passed to query"""
-    if field_input == "All":
-        return "*"
-    if isinstance(field_input, list):
-        return " ".join(field_input)
-    if isinstance(field_input, str):
-        return field_input
-    raise TypeError(
-        f"Field input should be str or list, {type(field_input)} was provided."
-    )
-
-
+############################
+# Delete book
+############################
 def remove_book_given_id(book_id: int) -> None:
     """Remove a book from the DB given its ID"""
     validate_input_type(book_id, int)
@@ -84,15 +58,30 @@ def remove_book_general(delete_condition_query: str) -> None:
     DB.commit()
 
 
-def validate_input_type(input_item: Any, exp_type: Type) -> None:
-    """To avoid unwanted injections, raise an error if input_item is not of type
-    exp_type"""
-    if not isinstance(input_item, exp_type):
-        raise TypeError(
-            f"Book ID should be {exp_type}, {type(input_item)} was provided"
-        )
+############################
+# Retrive last book
+############################
+def get_last_book(fields: FieldsInput = "All") -> tuple:
+    """Retrive the last book added to the database"""
+    fields = parse_field_input(fields)
+    last_id = get_last_id()
+    query = f"SELECT {fields} FROM Book WHERE book_pk = %s"
+    CURSOR.execute(query, (last_id,))
+    return CURSOR.fetchone()
 
 
+def get_last_id() -> str:
+    """Retrive the ID of the last book added in the DB"""
+    last_id = CURSOR.lastrowid
+    if last_id != 0:
+        return last_id
+    CURSOR.execute("SELECT MAX(book_pk) FROM Book")
+    return CURSOR.fetchone()[0]
+
+
+############################
+# Search book
+############################
 def search_book_given_title_author(
     title: str, author_name: str, author_surname: str, fields: FieldsInput = "All"
 ) -> MultiresultsSearch:
@@ -127,3 +116,28 @@ def search_book_general(
     if return_one:
         return CURSOR.fetchone()
     return CURSOR.fetchall()
+
+
+############################
+# Utilities
+############################
+def parse_field_input(field_input: FieldsInput) -> str:
+    """Transform an indication of field into str to be passed to query"""
+    if field_input == "All":
+        return "*"
+    if isinstance(field_input, list):
+        return " ".join(field_input)
+    if isinstance(field_input, str):
+        return field_input
+    raise TypeError(
+        f"Field input should be str or list, {type(field_input)} was provided."
+    )
+
+
+def validate_input_type(input_item: Any, exp_type: Type) -> None:
+    """To avoid unwanted injections, raise an error if input_item is not of type
+    exp_type"""
+    if not isinstance(input_item, exp_type):
+        raise TypeError(
+            f"Book ID should be {exp_type}, {type(input_item)} was provided"
+        )
