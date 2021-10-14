@@ -52,14 +52,19 @@ class TestDBActions(unittest.TestCase):
 
     def test_removebook(self):
         """Test that a book is correctly removed from the database"""
-        act.add_book_to_db("Test", "abcd", "Test", 120, "Test", False, "Test, Test")
+        act.add_book_to_db("Test", "edft", "Test", 120, "Test", False, "Test, Test")
+        act.add_book_to_db("Test", "abcd", "Testtt", 120, "Test", False, "Test, Test")
         act.add_book_to_db("Test", "kjim", "Test", 120, "Test", False, "Test, Test")
 
         last_id = CURSOR.lastrowid
         act.remove_book_given_id(last_id)
-        name = act.get_last_book(fields="author_name")
+        name_last = act.get_last_book(fields="author_name")
 
-        self.assertEqual(name[0], "abcd")
+        self.assertEqual(name_last[0], "abcd")
+
+        act.remove_book_given_title_author("Test", "abcd", "Testtt")
+        name_last = act.get_last_book(fields="author_name")
+        self.assertEqual(name_last[0], "edft")
 
 
 if __name__ == "__main__":

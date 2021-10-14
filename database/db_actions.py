@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Type, Union, Any
 from database.db_connect import DB, CURSOR
 
 
@@ -32,6 +32,7 @@ def get_last_book(fields: Union[str, list[str]] = "All") -> tuple:
 
 
 def get_last_id() -> str:
+    """Retrive the ID of the last book added in the DB"""
     last_id = CURSOR.lastrowid
     if last_id != 0:
         return last_id
@@ -54,11 +55,22 @@ def parse_field_input(field_input: Union[str, list[str]]) -> str:
 
 def remove_book_given_id(book_id: int) -> None:
     """Remove a book from the DB given its ID"""
-    # To avoid wrong unwanted injections
-    if not isinstance(book_id, int):
-        raise TypeError(f"Book ID should be int, {type(book_id)} was provided")
+    validate_input_type(book_id, int)
 
     query = f"book_pk = {book_id}"
+    remove_book_general(query)
+
+
+def remove_book_given_title_author(
+    title: str, author_name: str, author_surname: str
+) -> None:
+    """Remove a book from the DB given its ID"""
+    for arg in [title, author_name, author_surname]:
+        validate_input_type(arg, str)
+
+    query = f"""title = '{title}'
+    AND author_name = '{author_name}'
+    AND author_surname = '{author_surname}'"""
     remove_book_general(query)
 
 
@@ -66,3 +78,14 @@ def remove_book_general(delete_condition_query: str) -> None:
     """Remove a book from the DB given a general conditional query"""
     CURSOR.execute(f"DELETE FROM Book WHERE {delete_condition_query}")
     DB.commit()
+
+
+def validate_input_type(input_item: Any, exp_type: Type) -> None:
+    """To avoid unwanted injections, raise an error if input_item is not of type
+    exp_type"""
+    if not isinstance(input_item, exp_type):
+        raise TypeError(
+            f"Book ID should be {exp_type}, {type(input_item)} was provided"
+        )
+
+
