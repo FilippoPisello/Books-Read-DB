@@ -94,32 +94,35 @@ def search_bookid_given_title_author(
 
 
 def search_book_given_title_author(
-    title: str, author_name: str, author_surname: str, fields: FieldsInput = "All"
+    title: str,
+    author_name: str,
+    author_surname: str,
+    return_fields: FieldsInput = "All",
 ) -> MultiresultsSearch:
     """Search a book by title and author in the database. Return info as a
     tuple if found, None otherwise."""
     validate_multiple_inputs_type([title, author_name, author_surname], str)
     query = where_equal_title_author(title, author_name, author_surname)
-    return search_book_general(query, fields, return_one=True)
+    return search_book_general(query, return_fields, return_one=True)
 
 
 def search_book_given_id(
-    book_id: int, fields: FieldsInput = "All"
+    book_id: int, return_fields: FieldsInput = "All"
 ) -> SingleresultSearch:
     """Search a book by id in the database. Return info as a tuple if found,
     None otherwise."""
     validate_input_type(book_id, int)
     query = where_equal_bookid(book_id)
-    return search_book_general(query, fields, return_one=True)
+    return search_book_general(query, return_fields, return_one=True)
 
 
 def search_book_general(
-    search_condition_query: str, fields: FieldsInput = "All", return_one=False
+    search_condition_query: str, return_fields: FieldsInput = "All", return_one=False
 ) -> Union[MultiresultsSearch, SingleresultSearch]:
     """Run a search in the database and return the results. If return_one, only
     last result is returned."""
-    fields = parse_field_input(fields)
-    CURSOR.execute(f"SELECT {fields} FROM Book {search_condition_query}")
+    return_fields = parse_field_input(return_fields)
+    CURSOR.execute(f"SELECT {return_fields} FROM Book {search_condition_query}")
     if return_one:
         return CURSOR.fetchone()
 

@@ -82,12 +82,12 @@ class TestDBActions(unittest.TestCase):
         act.add_book_to_db("Test", "kjim", "Test", 120, "Test", False, "Test, Test")
         last_id = CURSOR.lastrowid
         search_result = act.search_book_given_title_author(
-            "Test", "kjim", "Test", fields="book_pk"
+            "Test", "kjim", "Test", return_fields="book_pk"
         )
         self.assertEqual(search_result[0], last_id)
 
         search_result = act.search_book_given_title_author(
-            "Test", "asjjajajaj", "Test", fields="book_pk"
+            "Test", "asjjajajaj", "Test", return_fields="book_pk"
         )
         self.assertIsNone(search_result)
 
@@ -110,7 +110,6 @@ class TestDBActions(unittest.TestCase):
 
         search_id = act.search_bookid_given_title_author("Ajhasjhdaj", "kjim", "Test")
         self.assertIsNone(search_id)
-
 
 
 if __name__ == "__main__":
