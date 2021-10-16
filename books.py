@@ -17,7 +17,7 @@ class Book:
     @property
     def author(self):
         """Return author name and surname"""
-        return self.author_name + self.author_surname
+        return self.author_name + " " + self.author_surname
 
     def __post_init__(self):
         """Standardize inputs when object is created passed."""
@@ -28,7 +28,7 @@ class Book:
         self.owned = int(self.owned)
 
         if self.tags is not None:
-            self.tags = [tag.upper() for tag in self.tags]
+            self.tags = [tag.lower() for tag in self.tags]
 
     def __eq__(self, other):
         return (self.title == other.title) & (self.author == other.author)
@@ -46,7 +46,11 @@ class BookRead:
 
     @property
     def bookread_id(self):
-        return str(self.book_id) + "_" + str(self.start_date).replace("/", "")
+        return str(self.book_id) + "-" + str(self.start_date).replace("-", "")
+
+    @property
+    def days_to_read(self):
+        return (self.end_date - self.start_date).days + 1
 
     def __eq__(self, other):
         return (self.book_id == other.book_id) & (self.start_date == other.start_date)
