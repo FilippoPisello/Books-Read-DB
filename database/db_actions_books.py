@@ -1,4 +1,4 @@
-from typing import Type, Union, Any
+from typing import Union
 from database.db_connect import DB, CURSOR
 import database.db_actions_general as db_gen
 
@@ -31,7 +31,7 @@ def add_book_to_db(
 ############################
 def remove_book_given_id(book_id: int) -> None:
     """Remove a book from the DB given its ID"""
-    validate_input_type(book_id, int)
+    db_gen.validate_input_type(book_id, int)
     query = where_equal_bookid(book_id)
     remove_book_general(query)
 
@@ -40,36 +40,31 @@ def remove_book_given_title_author(
     title: str, author_name: str, author_surname: str
 ) -> None:
     """Remove a book from the DB given its ID"""
-    validate_multiple_inputs_type([title, author_name, author_surname], str)
+    db_gen.validate_multiple_inputs_type([title, author_name, author_surname], str)
     query = where_equal_title_author(title, author_name, author_surname)
     remove_book_general(query)
 
 
 def remove_book_general(delete_condition_query: str) -> None:
     """Remove a book from the DB given a general conditional query"""
-    CURSOR.execute(f"DELETE FROM Book {delete_condition_query}")
-    DB.commit()
+    db_gen.remove_general(CURSOR, DB, "Book", delete_condition_query)
 
 
 ############################
 # Retrive last book
 ############################
-def get_last_book(fields: FieldsInput = "All") -> tuple:
+def get_last_book(fields: db_gen.FieldsInput = "All") -> tuple:
     """Retrive the last book added to the database"""
-    fields = parse_field_input(fields)
-    last_id = get_last_id()
+    fields = db_gen.parse_field_input(fields)
+    last_id = get_last_book_id()
     query = f"SELECT {fields} FROM Book WHERE book_pk = %s"
     CURSOR.execute(query, (last_id,))
     return CURSOR.fetchone()
 
 
-def get_last_id() -> str:
+def get_last_book_id() -> str:
     """Retrive the ID of the last book added in the DB"""
-    last_id = CURSOR.lastrowid
-    if last_id != 0:
-        return last_id
-    CURSOR.execute("SELECT MAX(book_pk) FROM Book")
-    return CURSOR.fetchone()[0]
+    return db_gen.get_last_id_general(CURSOR, "Book", "book_pk")
 
 
 ############################
@@ -95,38 +90,35 @@ def search_book_given_title_author(
     title: str,
     author_name: str,
     author_surname: str,
-    return_fields: FieldsInput = "All",
-) -> MultiresultsSearch:
+    return_fields: db_gen.FieldsInput = "All",
+) -> db_gen.MultiresultsSearch:
     """Search a book by title and author in the database. Return info as a
     tuple if found, None otherwise."""
-    validate_multiple_inputs_type([title, author_name, author_surname], str)
+    db_gen.validate_multiple_inputs_type([title, author_name, author_surname], str)
     query = where_equal_title_author(title, author_name, author_surname)
     return search_book_general(query, return_fields, return_one=True)
 
 
 def search_book_given_id(
-    book_id: int, return_fields: FieldsInput = "All"
-) -> SingleresultSearch:
+    book_id: int, return_fields: db_gen.FieldsInput = "All"
+) -> db_gen.SingleresultSearch:
     """Search a book by id in the database. Return info as a tuple if found,
     None otherwise."""
-    validate_input_type(book_id, int)
+    db_gen.validate_input_type(book_id, int)
     query = where_equal_bookid(book_id)
     return search_book_general(query, return_fields, return_one=True)
 
 
 def search_book_general(
-    search_condition_query: str, return_fields: FieldsInput = "All", return_one=False
-) -> Union[MultiresultsSearch, SingleresultSearch]:
+    search_condition_query: str,
+    return_fields: db_gen.FieldsInput = "All",
+    return_one=False,
+) -> Union[db_gen.MultiresultsSearch, db_gen.SingleresultSearch]:
     """Run a search in the database and return the results. If return_one, only
     last result is returned."""
-    return_fields = parse_field_input(return_fields)
-    CURSOR.execute(f"SELECT {return_fields} FROM Book {search_condition_query}")
-    if return_one:
-        return CURSOR.fetchone()
-
-    # For consistency, if no result then return None
-    multiple_result = CURSOR.fetchall()
-    return multiple_result if multiple_result else None
+    return db_gen.search_general(
+        CURSOR, "Book", search_condition_query, return_fields, return_one
+    )
 
 
 ############################
