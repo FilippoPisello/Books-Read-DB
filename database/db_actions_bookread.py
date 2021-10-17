@@ -33,7 +33,7 @@ def add_bookread_to_db(
 ############################
 def remove_bookread_given_id(bookread_id: str) -> None:
     """Remove a book from the DB given its ID"""
-    db_gen.validate_input_type(bookread_id, int)
+    db_gen.validate_input_type(bookread_id, str)
     query = where_equal_bookreadid(bookread_id)
     remove_bookread_general(query)
 
@@ -68,4 +68,4 @@ def get_last_bookread_id() -> str:
 # Conditions for WHERE statements
 ############################
 def where_equal_bookreadid(bookread_id: str) -> str:
-    return f"WHERE bookread_pk = {bookread_id}"
+    return f"WHERE bookread_pk = '{bookread_id}'"
