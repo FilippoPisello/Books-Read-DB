@@ -1,6 +1,6 @@
 import unittest
 
-from database.db_credentials import DbCredentials
+from userdata.credentials_reader import DbCredentials
 
 
 class TestCredentials(unittest.TestCase):

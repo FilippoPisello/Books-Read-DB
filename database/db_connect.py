@@ -1,7 +1,7 @@
 """Use credentials in db_credentials to access the database"""
 import mysql.connector
 
-from database.db_credentials import CD
+from userdata.credentials_reader import CD
 
 
 db = mysql.connector.connect(host=CD.host, user=CD.username, passwd=CD.password)
