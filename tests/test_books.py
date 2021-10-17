@@ -50,3 +50,7 @@ class TestBookRead(unittest.TestCase):
     def test_daystoread(self):
         self.assertEqual(self.read1.days_to_read, 30)
         self.assertEqual(self.read2.days_to_read, 17)
+
+
+if __name__ == "__main__":
+    unittest.main()
