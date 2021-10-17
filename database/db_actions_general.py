@@ -12,7 +12,7 @@ def get_last_id_general(cursor, table_name: str, pk_name: str) -> str:
     last_id = cursor.lastrowid
     if last_id != 0:
         return last_id
-    cursor.execute(f"SELECT MAX({pk_name}) FROM {table_name}")
+    cursor.execute(f"SELECT MAX({pk_name}) FROM {table_name} LIMIT 0, 1")
     return cursor.fetchone()[0]
 
 
@@ -32,12 +32,19 @@ def search_general(
     """Run a search in the database and return the results. If return_one, only
     last result is returned."""
     return_fields = parse_field_input(return_fields)
-    cursor.execute(f"SELECT {return_fields} FROM {table_name} {search_condition_query}")
+
+    multi_query = f"SELECT {return_fields} FROM {table_name} {search_condition_query}"
+
+    # Get one result if just one is needed
     if return_one:
+        single_query = multi_query + " LIMIT 0, 1"
+        cursor.execute(single_query)
         return cursor.fetchone()
 
-    # For consistency, if no result then return None
+    # Get all the results
+    cursor.execute(multi_query)
     multiple_result = cursor.fetchall()
+    # For consistency, if no result then return None
     return multiple_result if multiple_result else None
 
 

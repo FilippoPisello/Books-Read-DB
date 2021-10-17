@@ -50,8 +50,12 @@ def get_last_bookread(fields: db_gen.FieldsInput = "All") -> tuple:
     """Retrive the last bookread info added to the database"""
     fields = db_gen.parse_field_input(fields)
     last_id = get_last_bookread_id()
-    query = f"SELECT {fields} FROM Bookread WHERE book_pk = %s"
-    CURSOR.execute(query, (last_id,))
+    query = (
+        f"SELECT {fields} FROM Bookread "
+        + where_equal_bookreadid(last_id)
+        + " LIMIT 0, 1"
+    )
+    CURSOR.execute(query)
     return CURSOR.fetchone()
 
 
