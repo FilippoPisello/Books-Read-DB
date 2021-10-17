@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from datetime import date
+from typing import Union
 
 
 @dataclass
@@ -28,9 +29,21 @@ class Book:
         self.owned = int(self.owned)
 
         if self.tags is not None:
+            self.tags = [tag.lower().strip() for tag in self.tags]
 
     def __eq__(self, other):
         return (self.title == other.title) & (self.author == other.author)
+
+    @classmethod
+    def from_gui_dict(cls, gui_dict: dict[str, Union[str, bool, None]]):
+        title = gui_dict["Book title"]
+        name = gui_dict["Author Name"]
+        surname = gui_dict["Author Surname"]
+        pages = int(gui_dict["Pages"])
+        genre = gui_dict["Genre"]
+        owned = gui_dict["Owned"]
+        tags = None if gui_dict["Tags"] is None else gui_dict["Tags"].split(",")
+        return cls(title, name, surname, pages, genre, owned, tags)
 
 
 @dataclass
