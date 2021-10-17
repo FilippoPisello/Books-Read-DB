@@ -1,4 +1,5 @@
 from gooey import Gooey, GooeyParser
+from userdata.booksinfo_reader import BOOKSINFO
 
 
 @Gooey(
@@ -45,7 +46,7 @@ def add_book_fields(parser: GooeyParser) -> None:
     )
     book_group.add_argument(
         "Genre",
-        choices=["Narrative", "Business/Economics", "Psychology", "Philosophy"],
+        choices=BOOKSINFO.genres,
     )
     book_group.add_argument(
         "--Owned",

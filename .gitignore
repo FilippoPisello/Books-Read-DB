@@ -21,3 +21,5 @@ database/__pycache__/db_actions_bookread.cpython-39.pyc
 userdata/__pycache__/credentials_reader.cpython-39.pyc
 data_processing/__pycache__/books.cpython-39.pyc
 data_processing/__pycache__/__init__.cpython-39.pyc
+tests/__pycache__/test_datareader.cpython-39.pyc
+userdata/__pycache__/booksinfo_reader.cpython-39.pyc
