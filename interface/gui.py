@@ -15,7 +15,6 @@ def gui_main() -> dict[str, str]:
     add_read_fields(parser)
 
     args = vars(parser.parse_args())
-    print(args)
     return args
 
 
@@ -85,7 +84,3 @@ def add_read_fields(parser: GooeyParser) -> None:
         help="Add a comment on the book",
         default=None,
     )
-
-
-if __name__ == "__main__":
-    gui_main()
