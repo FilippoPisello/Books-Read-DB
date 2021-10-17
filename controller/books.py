@@ -28,7 +28,6 @@ class Book:
         self.owned = int(self.owned)
 
         if self.tags is not None:
-            self.tags = [tag.lower() for tag in self.tags]
 
     def __eq__(self, other):
         return (self.title == other.title) & (self.author == other.author)

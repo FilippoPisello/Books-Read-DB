@@ -1,7 +1,7 @@
 import unittest
 from datetime import date
 
-from data_processing.books import Book, BookRead
+from controller.books import Book, BookRead
 
 
 class TestBooks(unittest.TestCase):
