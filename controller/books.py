@@ -20,6 +20,11 @@ class Book:
         """Return author name and surname"""
         return self.author_name + " " + self.author_surname
 
+    @property
+    def string_tags(self):
+        """Return tags as a single string where tags are comma-separated"""
+        return ", ".join(self.tags)
+
     def __post_init__(self):
         """Standardize inputs when object is created passed."""
         self.title = self.title.title()
