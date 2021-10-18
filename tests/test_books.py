@@ -69,6 +69,10 @@ class TestBooks(unittest.TestCase):
         book2 = Book.from_gui_dict(dict2)
         self.assertEqual(book2.tags, ["lorem", "ipsum", "dolor"])
 
+    def test_strtags(self):
+        self.assertEqual(self.book1.string_tags, None)
+        self.assertEqual(self.book2.string_tags, "yes, no")
+
 
 class TestBookRead(unittest.TestCase):
     def setUp(self) -> None:

@@ -16,13 +16,15 @@ class Book:
     tags: list[str] = None
 
     @property
-    def author(self):
+    def author(self) -> str:
         """Return author name and surname"""
         return self.author_name + " " + self.author_surname
 
     @property
-    def string_tags(self):
+    def string_tags(self) -> Union[str, None]:
         """Return tags as a single string where tags are comma-separated"""
+        if self.tags is None:
+            return None
         return ", ".join(self.tags)
 
     def __post_init__(self):
