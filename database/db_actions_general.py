@@ -48,6 +48,14 @@ def search_general(
     return multiple_result if multiple_result else None
 
 
+def reset_pd_general(cursor, table_name: str, pk_name: str):
+    max_id = get_last_id_general(cursor, table_name, pk_name)
+    if max_id is None:
+        max_id = 1
+    query = f"ALTER TABLE {table_name} AUTO_INCREMENT = {max_id}"
+    cursor.execute(query)
+
+
 ################################################################################
 # Utilities
 ################################################################################

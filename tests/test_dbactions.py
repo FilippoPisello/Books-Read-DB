@@ -13,6 +13,7 @@ class TestDBActionsBook(unittest.TestCase):
         CURSOR.execute(
             "DELETE FROM Book WHERE title = 'Test'",
         )
+        actbook.reset_pk_book()
         DB.commit()
         CURSOR.reset()
 
@@ -133,6 +134,7 @@ class TestDBActionsReadbook(unittest.TestCase):
         CURSOR.execute(
             "DELETE FROM Book WHERE title = 'Test'",
         )
+        actbook.reset_pk_book()
         DB.commit()
         CURSOR.reset()
 

@@ -134,3 +134,9 @@ def where_equal_title_author(title: str, author_name: str, author_surname: str) 
     AND author_name = '{author_name}'
     AND author_surname = '{author_surname}'"""
     return query
+
+############################
+# Other
+############################
+def reset_pk_book():
+    db_gen.reset_pd_general(CURSOR, "Book", "book_pk")
