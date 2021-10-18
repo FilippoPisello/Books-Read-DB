@@ -2,7 +2,7 @@
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/release/python-390/)
 # Read books tracker
 Essential interface-model-database system to store the information about the books one reads.
-
+![](docs_materials/demo.gif)
 ## Goal of the project
 Imagine that you read a lot of books. Imagine also that you have no idea about how databases and graphical user interfaces (GUIs) work but you would like to learn.
 
