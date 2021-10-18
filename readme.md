@@ -14,6 +14,8 @@ To run this code, you should first download the files in the directory. You can 
 ```console
 git clone https://github.com/FilippoPisello/Books-Read-DB
 ```
+First of all, you should add your database credentials in the file *"db_credentials.json"* in the folder *"userdata"*.
+
 Only for the first use, the schema and tables should be created with this command:
 ```console
 python -m database.db_creation
