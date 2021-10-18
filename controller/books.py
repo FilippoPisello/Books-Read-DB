@@ -66,3 +66,20 @@ class BookRead:
 
     def __eq__(self, other):
         return (self.book_id == other.book_id) & (self.start_date == other.start_date)
+
+    @classmethod
+    def from_gui_dict(cls, gui_dict: dict[str, Union[str, bool, None]], book_id: int):
+        start_date = cls.str_date_to_date(gui_dict["Starting date"])
+        end_date = cls.str_date_to_date(gui_dict["Ending date"])
+        out_of_ten_score = int(gui_dict["Score"])
+        comment = gui_dict["Comment"]
+        return cls(book_id, start_date, end_date, out_of_ten_score, comment)
+
+    @staticmethod
+    def str_date_to_date(str_date: str) -> date:
+        """Transform a date passed as str in the form 'YYYY-MM-DD' to
+        proper datetime.date type."""
+        date_items: list[str, str, str] = str_date.split("-")
+        date_items = [int(x) for x in date_items]
+        year, month, day = date_items
+        return date(year, month, day)

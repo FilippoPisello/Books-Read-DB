@@ -33,6 +33,42 @@ class TestBooks(unittest.TestCase):
         self.assertEqual(self.book1.author, "Lorem Ipsum")
         self.assertEqual(self.book2.author, "Lorem Ipsum")
 
+    def test_fromdict(self):
+        """Test that Book class instance is correctly created from dict"""
+        dict1 = {
+            "Book title": "Lorem",
+            "Author Name": "Ipsum",
+            "Author Surname": "Dolor",
+            "Pages": "1",
+            "Genre": "Crime",
+            "Owned": True,
+            "Tags": None,
+            "Starting date": "2021-10-18",
+            "Ending date": "2021-10-20",
+            "Score": "3",
+            "Comment": None,
+        }
+        book1 = Book.from_gui_dict(dict1)
+        self.assertEqual(book1.title, "Lorem")
+        self.assertEqual(book1.author_name, "Ipsum")
+        self.assertEqual(book1.author_surname, "Dolor")
+        self.assertEqual(book1.pages, 1)
+        self.assertEqual(book1.genre, "Crime")
+        self.assertEqual(book1.owned, True)
+        self.assertEqual(book1.tags, None)
+
+        dict2 = {
+            "Book title": "Lorem",
+            "Author Name": "Ipsum",
+            "Author Surname": "Dolor",
+            "Pages": "1",
+            "Genre": "Crime",
+            "Owned": True,
+            "Tags": "Lorem,Ipsum, Dolor ",
+        }
+        book2 = Book.from_gui_dict(dict2)
+        self.assertEqual(book2.tags, ["lorem", "ipsum", "dolor"])
+
 
 class TestBookRead(unittest.TestCase):
     def setUp(self) -> None:
@@ -50,6 +86,28 @@ class TestBookRead(unittest.TestCase):
     def test_daystoread(self):
         self.assertEqual(self.read1.days_to_read, 30)
         self.assertEqual(self.read2.days_to_read, 17)
+
+    def test_fromdict(self):
+        """Test that Bookread class instance is correctly created from dict"""
+        dict1 = {
+            "Book title": "Lorem",
+            "Author Name": "Ipsum",
+            "Author Surname": "Dolor",
+            "Pages": "1",
+            "Genre": "Crime",
+            "Owned": True,
+            "Tags": None,
+            "Starting date": "2021-10-18",
+            "Ending date": "2021-10-20",
+            "Score": "3",
+            "Comment": None,
+        }
+        bookread1 = BookRead.from_gui_dict(dict1, 1)
+        self.assertEqual(bookread1.book_id, 1)
+        self.assertEqual(bookread1.start_date, date(2021, 10, 18))
+        self.assertEqual(bookread1.end_date, date(2021, 10, 20))
+        self.assertEqual(bookread1.out_of_ten_score, 3)
+        self.assertEqual(bookread1.comment, None)
 
 
 if __name__ == "__main__":
